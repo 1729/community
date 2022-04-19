@@ -1,0 +1,192 @@
+<h1>The DAO of Unix Programming</h1>
+
+<p>
+In podcasts and other venues, A16z's Chris Dixon has described the initial wave of web3 apps as "skeumorphic." What he means is that these web3 apps imitate the design of earlier, monolithic web2 apps, in much the way that some early PC apps visually imitated the design of real-world objects (e.g., a notepad app that looks like a yellow notepad).
+</p>
+
+<p>
+I have a bit of a love-hate relationship with Chris's adaptation of "skeumorphism" -- I love it because it's evocative and gets at something real about the current state of web3, but I hate it because it only tells us what not to build. It doesn't offer any forward guidance.
+</p>
+
+<p>
+In this talk, I want move on from the "skeumorphism" language and try to look for positive, construction clues about the kinds of apps that web3 makes possible.
+</p>
+
+<p>
+Because all of computing is cyclical at all levels of abstraction, I think we can look back to an earlier turn of the wheel for a positive vision of what should come next with web3. Specifically, I think we should go back to Unix, and the philosophies that it embodied.
+</p>
+
+<p>
+Eric S. Raymon's <em>The Art of Unix Programming</em> contains best, most concise summaries of the philosophical underpinnings of Unix. (Or, if there's a better source for such, please tell me, because as a member of the Slashdot generation ESR is the main thinker I'm familiar with.)
+</p>
+
+<p>
+Twitter user @brandur has written a <a href="https://brandur.org/small-sharp-tools">really great summary</a> of ESR's writing on Unix, and really you should pause here and read the whole thing before proceeding. I'm going to quote from it, below, and also pull some of its ESR quotes.
+</p>
+
+<p>
+I've heard the Unix philosophy summed up as "small pieces, loosely joined," but @brandur reminds me of alternate description from ESR that we also used to quote back in the day: "small, sharp tools." Here's the full quote:
+</p>
+
+<blockquote>
+One strain of Unix thinking emphasizes small sharp tools, starting designs from zero, and interfaces that are simple and consistent. This point of view has been most famously championed by Doug McIlroy. Another strain emphasizes doing simple implementations that work, and that ship quickly, even if the methods are brute-force and some edge cases have to be punted. Ken Thompson’s code and his maxims about programming have often seemed to lean in this direction.
+</blockquote>
+
+<p>
+In other words, a suite of compact, single-purpose programs like `ls`, `cat`, `ps`, and `grep` can be composed together via pipe operators to perform specific tasks. These programs all share an execution context -- a logged-in user with a role, a filesystem, a `stdout` buffer, and so on -- and because of that shared context a user can compose them in different combinations to perform different tasks.
+</p>
+
+<p>
+As long as the maintainers of, say, `ps` continue to adhere to certain OS conventions, they don't really need to think too much about what the maintainers of `grep` are doing, especially under the hood. So a user like me can compose a command like, `ps aux | grep postgres` and see if Postgresql is running on my Mac or if I need to restart it.
+</p>
+
+<h2>What about Martin Folwer's dragons?</h2>
+
+<p>
+Before I translate this into a vision for web3, I have to address the dragons that are already in the room. I'm talking, of course, about a famous essay by Martin Folwer: <a href="https://martinfowler.com/bliki/MonolithFirst.html">MonolithFirst</a>. 
+</p>
+
+<p>
+TKTK folwer's diagram
+</p>
+
+<p>
+All of us who've done web-scale programming in any professional capacity have developed a healthy aversion to "microservices first" -- I know I sure have. Best practice is to start with a monolith, and then break it apart at service boundaries as that becomes cost-effective and feasible. Or, maybe you never break it up -- really big monoliths work great for some use cases.
+</p>
+
+<p>
+The problem with microservices, at least in my experience (this isn't so much drawn directly from Folwer's essay), is twofold:
+</p>
+
+<ol>
+	<li><strong>Managing state</strong> between services. Every service is going to have its own private datastore, because nobody in their right mind willingly & knowingly uses a database as an integration point. So there are sync and cache invalidation problems inherent in the microservices approach, and these are Hard Problems.</li>
+
+	<li><strong>API design</strong> is an annoying time sink, and a source of nerd fights. I'm a big fan of JSONAPI, but most nerds have big hot opinions about this. Also, the maintainers of both microservices have to know about each others' APIs, so there's another flavor of sync problem in the realm of API knowledge and documentation.</li>
+</ol>
+
+<p>
+You don't want to be syncing state and doing API design if you can just make all the contexts internal to the application, such that everyone can share a database schema and a migration history. In a single-db app, we nerds can limit our fights to data relations and naming things, and once the migration is run in production, even the nerds who lost the fight are not keen to roll it back and re-do it their way. Everyone moves on with their jobs.
+</p>
+
+<h2>A DAO is not an app, so it doesn't have to be a monolith</h2>
+
+<p>
+I've seen a decent amount of DAO tooling screenshots and mockups in the past months, some released and some unreleased. I have also written some DAO tooling, and am in the process of writing some more. This <a href="https://forum.bankless.community/t/dao-map-transparency-accountability/1937">proposed prototype screen</a> that I dug up on Google, for BanklessDAO, is typical if what I've encountered:
+</p>
+
+<p>
+TKTK prototype screens
+</p>
+
+<p>
+I'm most interested in that little navigation strip on the left, which indicates that there's a home screen (probably a dashboard), then a search view, and an inbox of some kind for messages, and an address book tab, and so on.
+</p>
+
+<p>
+This screenshot says to me, "there are a bunch of `users` in a database, and each user has many `projects,` and you can sort by `projects.status`..." So far, so skeumorphic. 
+</p>
+
+<p>
+The question I have, though, is: if we take the Billion User Table seriously, and all those `users` are just wallets on-chain that have tokens in them, then why are all these things part of one app?
+</p>
+
+<p>
+The internet is full of Kanban boards, so why write a new one and tuck it all the way inside a "DAO tooling" monolith? If all my DAO users are just blockchain wallets containing certain tokens, and some of those tokens grant roles in the DAO, then even if I'm writing a Kanban for these users to collaborate with, why does it have to be inside a larger app with a dashboard and all the bells and whistles.
+</p>
+
+<p>
+A Trello clone that supports login with Ethereum and token gating, and that also acts as a blockchain oracle that can write events to the chain (X user completed Y project on Z date) would be usable by anyone with some tokens and a browser, and could be developed in isolation by a separate team on whatever stack they like.
+</p>
+
+<p>
+The dashboard could be its own app on its own stack. It just scans the chain for state changes that signify different goals being hit, and anyone with the correct token can log in and view it.
+</p>
+
+<p>
+Or, consider the address book. Why is this inside the same app as the Bounty Board? Is that really necessary? A standalone DAO address book app might let anyone with a DAO token create some database entries that include their name, profile picture, location for meetups, social links, and other info. Anyone else who wants to search that address book can connect a wallet and, if that wallet has the right token with the right access, can see whatever it is they're allowed to see.
+</p>
+
+<p>
+How about a map of where members are for meetups? A token-gated map could pull data from the DAO's contacts app and display a map to whoever logs in. It would be very simple, and the team could use whatever tech stack they're most fluent in. The URL for it could be published on a token-gated web page for the DAO, so members can find it.
+</p>
+
+<p>
+Given that the users and roles are all stored on-chain in the form of token-holding wallets, and that some kinds of app output can be written to the chain by treating it as a sort of `stdout` buffer (depending on the chain and the size of the state), and that any app can read from the chain, it just doesn't seem to me that a bunch of competing "DAO tooling" monoliths are the way forward.
+</p>
+
+<p>
+Instead of jamming a search function, an address book, a user map, an organizational map, a bounty board, and other tools of different kinds into a single monolith behind a single web interface, what if we thought in a Unix way with the following primitives:
+</p>
+
+<ul>
+	<li>Users are wallets</li>
+	<li>Roles are NFTs</li>
+	<li>stdout and stdin are the blockchain</li>
+	<li>Pipe operators aren't necessary because the apps are polling the chain for data</li>
+</ul>
+
+<p>
+Instead of a big DAO tooling effort, maybe what we need are the web3 equivalents of `ls`, `cat`, `grep`, `ps`, and the like. Small, sharp tools that read from `stdin` and write to `stdout`, and that execute in a common context of wallets and tokens. 
+</p>
+
+<h2>How this might look at 1729</h2>
+
+<p>
+I can make all of this concrete with a few examples that contrast the way I'm currently doing things with the way I'd like to be doing things.
+</p>
+
+<p>
+The current 1729 attendance and NFT flow is:
+</p>
+<ol>
+	<li>Users fill out an Airtable form after the lecture</li>
+	<li>Staff collect the forms and match them to supplied Discord usernames to internal users that we has email addresses for</li>
+	<li>Staff mints POAPs</li>
+	<li>Staff mails POAP links to the email addresses of the users who submitted the feedback form</li>
+	<li>Staff updates attendance metrics in the main Dashboard by querying the lecture Feedbacks table.</li>
+	<li>Staff reviews the feedback rows in Airtable to learn what worked or didn't work about the lecture.</li>
+</ol>
+
+<p>
+Contrast this to how it might work in a world of "small, sharp tools":
+</p>
+<ul>
+	<li>Users fill out a post-lecture feedback form on the 1729 Feedback App</li>
+	<li>The Feedback App mints an NFT to their connected wallet after they hit 'Submit'.</li>
+	<li>The Dashboard App polls the chain for the number of recently minted lecture attendance NFTs and updates the "Attendance" widget on the dashboard.</li>
+	<li>Staffers who want to review feedback connect to the Feedback App with a 1729 Staff token in their wallet.</li>
+</ul>
+
+<p>
+Maybe in the second step above, the Feedback App also writes each submitted feedback to an encrypted lockbox on Arweave and puts the file address into the attendance NFT. Either the holder of the NFT or a staffer can unlock that lockbox and view the feedback. This way, we could build an internal 1729 Feedback Review app that takes the output of the Feedback App and lets us do things like flag certain feedbacks for followup, or link to them in internal comms.
+</p>
+
+<p>
+Maybe some subset of users are having a hard time with the Feedback App because it's not localized properly for their first language. So they fork it and stand up their own Feedback App that works better for them, and 1729 somehow blesses it with the ability to mint authentic 1729 Feedback NFTs. Or maybe there's a whole ecosystem of Feedback Apps out there, and the 1729 staff blesses a bunch of them as official feedback NFT minters. And all every one of these apps does is to take in some attendee feedback via host- or attendee-supplied form, and mint an NFT when the feedback is submitted. That's it.
+</p>
+
+<p>
+An even better setup could exist as a simple Typeform integration. In this case, a Feedback App is just an oracle that takes in a Typeform submission and writes the results to the chain somehow -- possibly via the NFT + Arweave combo described above.
+</p>
+
+<h2>Conclusion: things that are needed for the above to work</h2>
+
+<p>
+In order for the above vision to become reality, we need a few more primitives. We may actually already have these and I just don't know about them -- if this is the case, please point me in the right direction.
+</p>
+
+<p>
+First, we need the kind of <strong>public NFT role-granting table</strong> I described in a previous talk. There's been <a href="https://engineerdao.notion.site/engineerdao/RBAC-With-NFTs-23542717d8a345eba0d7d8d3f4a403fb">some discussion</a> of how this may be possible to implement with the existing ERC 721 standard. We should keep exploring this, and/or figure out how to do it on Solana. 
+</p>
+
+<p>
+Second, implicit at a number of points in the above discussion is the existence of a <strong>parent NFT</strong> that can be used to <strong>mint valid child NFTs</strong>, where we can cryptographically verify that a particular child was issued by the holder of a particular parent. So for the Feedback App example, I'd want to be able to issue (and also revoke, if necessary) a set of parent 1729 Feedback NFTs that different competing Feedback Apps can use to mint valid 1729 Feedback NFTs for hosts and attendees.
+</p>
+
+<p>
+Finally, we need good tools in all the different frameworks for letting an app custody a token-holding wallet, and then use the above parent token in an automated fashion to mint child tokens.
+</p>
+
+<p>
+I'd be shocked if all the above doesn't already exist in some form or another in the ecosystem. But internally to 1729, it would be good if we could bring all these elements together and begin to experiment with them in order to build a set of small, sharp tools for managing our community.
+</p>
