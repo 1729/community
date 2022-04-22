@@ -19,8 +19,7 @@ As long as the maintainers of, say, `ps` continue to adhere to certain OS conven
 ## What about Martin Folwer's dragons?
 Before I translate this into a vision for web3, I have to address the dragons that are already in the room. I'm talking, of course, about a famous essay by Martin Folwer: [MonolithFirst](https://martinfowler.com/bliki/MonolithFirst.html).
 
-TKTK diagram
-Caption: Folwer's diagram, with the "here be dragons" jump to microservices
+![image](https://user-images.githubusercontent.com/340258/164806163-e2b4d8e9-17e9-4926-8d7c-b0ca13abfaba.png) _Folwer's diagram, with the "here be dragons" jump to microservices_
 
 All of us who've done web-scale programming in any professional capacity have developed a healthy aversion to "microservices first" – I know I sure have. Best practice is usually to start with a monolith, and then break it apart at service boundaries as that becomes cost-effective and feasible. Or, maybe you just never break it up; really big monoliths work great for some use cases.
 
@@ -35,7 +34,7 @@ But I'm not convinced that the above really applies to web3. Specifically, I thi
 ## A DAO is not an app, so it doesn't have to be a monolith
 I've seen a decent amount of DAO tooling screenshots and mockups in the past months, some released and some unreleased. I have also written some DAO tooling, and am in the process of writing some more. This [proposed prototype screen](https://forum.bankless.community/t/dao-map-transparency-accountability/1937) that I dug up on Google, for Bankless DAO, is typical of some of the more ambitious tools I've encountered:
 
-TKTK bankless screen
+![image](https://user-images.githubusercontent.com/340258/164806530-07362bb6-2837-4fed-aa72-2ff5de6b72dc.png)
 
 I'm most interested in that little navigation strip on the left, which indicates that there's a home screen (probably a dashboard), then a search view, an inbox of some kind for messages, an address book tab, and so on.
 
